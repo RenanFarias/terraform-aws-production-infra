@@ -4,10 +4,11 @@ VPC module responsible for provisioning the networking layer of the infrastructu
 This module creates:
 
 - VPC
-- Two public subnets across different Availability Zones
-- Two private subnets across different Availability Zones
-- Internet Gateway to allow outbound internet access
-- Route table for public subnet
+- Multiple public subnets across availability zones
+- Multiple private subnets across availability zones
+- Internet Gateway
+- Route table
+- Route table associations
 
 The architecture follows common AWS best practices by separating
 public and private resources to improve security and network isolation.
@@ -76,9 +77,12 @@ resource "aws_route" "public_internet_access" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-# Associates the public subnet with the public route table
+
+# Associates each public subnet with the public route table
 # so resources launched there can access the internet
 resource "aws_route_table_association" "public_subnet_association" {
-  subnet_id      = aws_subnet.public.id
+  count = length(var.public_subnet_cidrs)
+
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
