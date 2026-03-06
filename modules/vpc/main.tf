@@ -1,3 +1,13 @@
+/*
+VPC module responsible for provisioning the networking
+layer of the infrastructure.
+
+It creates:
+- a VPC
+- public subnet for load balancers
+- private subnet for application workloads
+*/
+
 resource "aws_vpc" "main"{
     cidr_block           = var.vpc_cidr
     enable_dns_hostnames = true
