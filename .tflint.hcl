@@ -1,11 +1,11 @@
 # TFLint configuration for Terraform project
 
 config {
-  module = true
+  call_module_type = "all"
 }
 
 plugin "aws" {
   enabled = true
-  version = "0.29.0"
+  version = "0.32.0"
   source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
