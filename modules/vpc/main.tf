@@ -59,15 +59,15 @@ resource "aws_flow_log" "vpc_flow_log" {
 
 # Public subnets used for internet-facing components such as load balancers
 resource "aws_subnet" "public" {
+  #tfsec:ignore:aws-ec2-no-public-ip-subnet
+  # Public subnet intentionally allows public IP assignment
+  # because it is designed for internet-facing components
+  # such as load balancers and NAT gateways.
   count = length(var.public_subnet_cidrs)
 
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidrs[count.index]
   availability_zone       = var.availability_zones[count.index]
-  #tfsec:ignore:aws-ec2-no-public-ip-subnet
-  # Public subnet intentionally allows public IP assignment
-  # because it is designed for internet-facing components
-  # such as load balancers and NAT gateways.
   map_public_ip_on_launch = true
 
   tags = {
