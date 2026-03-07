@@ -51,5 +51,7 @@ jobs:
         run: tflint -f compact
 
       # Run Terraform security scan
-      - name: Run tfsec
+      - name: Run tfsec security scan
         uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          additional_args: --minimum-severity HIGH
