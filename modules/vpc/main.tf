@@ -24,7 +24,37 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
+  name = "/aws/vpc/flowlogs"
+}
+
+resource "aws_iam_role" "flow_logs_role" {
+  name = "vpc-flow-logs-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "vpc-flow-logs.amazonaws.com"
+      }
+      Effect = "Allow"
+    }]
+  })
+}
+
+resource "aws_flow_log" "vpc_flow_log" {
+  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  log_destination_type = "cloud-watch-logs"
+  iam_role_arn         = aws_iam_role.flow_logs_role.arn
+  vpc_id               = aws_vpc.main.id
+  traffic_type         = "ALL"
+}
+
 # Public subnets used for internet-facing components such as load balancers
+# Public subnet intentionally allows public IP assignment
+# because it is designed for internet-facing components
+# such as load balancers and NAT gateways.
 resource "aws_subnet" "public" {
   count = length(var.public_subnet_cidrs)
 
