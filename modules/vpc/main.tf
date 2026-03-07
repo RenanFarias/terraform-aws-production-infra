@@ -24,8 +24,14 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_kms_key" "logs_key" {
+  description             = "KMS key for VPC flow logs"
+  deletion_window_in_days = 7
+}
+
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
-  name = "/aws/vpc/flowlogs"
+  name       = "/aws/vpc/flowlogs"
+  kms_key_id = aws_kms_key.logs_key.arn
 }
 
 resource "aws_iam_role" "flow_logs_role" {
