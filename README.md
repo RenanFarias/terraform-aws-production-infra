@@ -68,3 +68,16 @@ Remote state enables:
 - protection against state corruption
 - locking to prevent concurrent Terraform runs
 - centralized infrastructure state management
+
+## CI/CD Pipeline
+
+This project includes a GitHub Actions pipeline to automatically validate Terraform code.
+
+Pipeline steps:
+
+- Terraform format validation
+- Terraform initialization
+- Terraform configuration validation
+
+The pipeline runs on every push and pull request to ensure infrastructure
+code remains consistent and valid.

@@ -1,0 +1,42 @@
+# Terraform CI pipeline for validating infrastructure code
+# This workflow ensures Terraform configuration is properly formatted
+# and syntactically valid before infrastructure changes are applied.
+
+name: Terraform CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Step 1: Checkout repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Step 3: Ensure Terraform files are correctly formatted
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      # Step 4: Initialize Terraform without backend
+      # Backend is disabled because this repository demonstrates
+      # configuration only and does not require real AWS credentials.
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # Step 5: Validate Terraform configuration syntax
+      - name: Terraform Validate
+        run: terraform validate
