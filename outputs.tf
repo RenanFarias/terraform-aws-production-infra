@@ -12,3 +12,7 @@ output "private_subnet_id" {
   description = "Private subnet IDs"
   value       = module.vpc.private_subnet_ids
 }
+
+output "alb_dns_name" {
+  value = module.alb.alb_dns_name
+}
