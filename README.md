@@ -1,95 +1,139 @@
+# Terraform AWS Production Infrastructure
+Terraform-based AWS infrastructure project designed to demonstrate
+DevOps best practices including:
+
+- Infrastructure as Code
+- Modular Terraform architecture
+- CI/CD pipelines
+- DevSecOps security scanning
+- Production-style AWS networking
+
 ## Architecture
 
-This project demonstrates a production-style AWS network architecture.
+This project demonstrates a production-style AWS infrastructure built using Terraform.
 
-Components currently implemented:
+The architecture follows common cloud design principles such as modular infrastructure,
+Infrastructure as Code (IaC), automated validation pipelines, and security scanning.
+
+### Components
+
+The following components are currently implemented:
 
 - VPC
-- Public subnet
-- Private subnet
+- Public subnets
+- Private subnets
 - Internet Gateway
-- Route table for internet access
+- Route tables
+- Application Load Balancer (ALB)
 
-Architecture overview:
+### Architecture Overview
+
 
 Internet
-   │
-Internet Gateway
-   │
-Public Subnet
-   │
-Application Load Balancer (future)
+│
+▼
+Application Load Balancer
+│
+▼
+Public Subnets (Multi-AZ)
+│
+▼
+Private Subnets
+│
+▼
+Application Services (future)
 
-Private Subnet
-   │
-Application services (future)
+
+The load balancer distributes incoming traffic to application services running
+inside private subnets.
+
+---
 
 ## Network Architecture
 
-The VPC is designed using a multi-AZ architecture to improve availability.
+The VPC is designed using a **multi-Availability Zone (multi-AZ)** architecture
+to improve availability and fault tolerance.
 
-Subnets are distributed across two Availability Zones:
+Subnets are distributed across two Availability Zones.
 
-Public Subnets
+### Public Subnets
+
+Used for internet-facing infrastructure such as load balancers and NAT gateways.
+
 - 10.0.1.0/24 (AZ-A)
 - 10.0.2.0/24 (AZ-B)
 
-Private Subnets
+### Private Subnets
+
+Used for internal services such as application servers, containers, and databases.
+
 - 10.0.10.0/24 (AZ-A)
 - 10.0.11.0/24 (AZ-B)
 
+---
+
 ## Terraform Remote State
 
-In real production environments, Terraform state should not be stored locally.
+In production environments, Terraform state should **not be stored locally**.
 
 This project demonstrates how to configure a remote backend using:
 
-- AWS S3 for storing the Terraform state
-- DynamoDB for state locking
+- **AWS S3** for storing Terraform state
+- **DynamoDB** for state locking
 
-Example architecture:
+### Remote State Architecture
+
 
 Terraform
-   │
-   ▼
-S3 Bucket (state storage)
-   │
-   ▼
-DynamoDB Table (state locking)
+│
+▼
+S3 Bucket (State Storage)
+│
+▼
+DynamoDB Table (State Locking)
+
 
 Note: this repository demonstrates the configuration only.
-Actual AWS resources would need to be created before enabling the backend.
+Actual AWS resources must exist before enabling the backend.
 
-### Why remote state matters
+### Why Remote State Matters
 
 Remote state enables:
 
 - safe collaboration between engineers
 - protection against state corruption
-- locking to prevent concurrent Terraform runs
+- prevention of concurrent Terraform runs
 - centralized infrastructure state management
+
+---
 
 ## CI/CD Pipeline
 
-This project includes a GitHub Actions pipeline to automatically validate Terraform code.
+This project includes a **GitHub Actions pipeline** that automatically validates
+Terraform code on every push and pull request.
 
 Pipeline steps:
 
-- Terraform format validation
-- Terraform initialization
-- Terraform configuration validation
+- Terraform format validation (`terraform fmt`)
+- Terraform initialization (`terraform init`)
+- Terraform configuration validation (`terraform validate`)
 
-The pipeline runs on every push and pull request to ensure infrastructure
-code remains consistent and valid.
+This ensures infrastructure code remains consistent and syntactically valid.
+
+---
 
 ## DevSecOps Pipeline
 
-This repository includes a CI pipeline that performs:
+The CI pipeline also includes security and quality checks:
 
-- Terraform formatting checks
-- Terraform configuration validation
-- Terraform linting using **TFLint**
-- Terraform security scanning using **tfsec**
+- **TFLint** — Terraform linting and best-practice validation
+- **tfsec** — Infrastructure security scanning
 
-These tools help ensure infrastructure code follows best practices
-and avoids common security misconfigurations.
+These tools help detect:
+
+- insecure configurations
+- misconfigured resources
+- violations of infrastructure best practices
+
+This approach demonstrates a **DevSecOps workflow**, where security checks are
+integrated directly into the CI pipeline.
