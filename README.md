@@ -81,3 +81,15 @@ Pipeline steps:
 
 The pipeline runs on every push and pull request to ensure infrastructure
 code remains consistent and valid.
+
+## DevSecOps Pipeline
+
+This repository includes a CI pipeline that performs:
+
+- Terraform formatting checks
+- Terraform configuration validation
+- Terraform linting using **TFLint**
+- Terraform security scanning using **tfsec**
+
+These tools help ensure infrastructure code follows best practices
+and avoids common security misconfigurations.

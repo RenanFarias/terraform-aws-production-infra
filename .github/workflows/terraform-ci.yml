@@ -1,6 +1,6 @@
-# Terraform CI pipeline for validating infrastructure code
-# This workflow ensures Terraform configuration is properly formatted
-# and syntactically valid before infrastructure changes are applied.
+# Terraform CI/CD pipeline with security scanning
+# This workflow validates Terraform configuration and
+# performs linting and security analysis.
 
 name: Terraform CI
 
@@ -8,35 +8,48 @@ on:
   push:
     branches:
       - main
+
   pull_request:
     branches:
       - main
 
 jobs:
   terraform:
-    name: Terraform Validation
+    name: Terraform CI Pipeline
     runs-on: ubuntu-latest
 
     steps:
 
-      # Step 1: Checkout repository code
+      # Checkout repository code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Terraform CLI
+      # Install Terraform CLI
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # Step 3: Ensure Terraform files are correctly formatted
+      # Check Terraform formatting
       - name: Terraform Format
         run: terraform fmt -check -recursive
 
-      # Step 4: Initialize Terraform without backend
-      # Backend is disabled because this repository demonstrates
-      # configuration only and does not require real AWS credentials.
+      # Initialize Terraform without backend
       - name: Terraform Init
         run: terraform init -backend=false
 
-      # Step 5: Validate Terraform configuration syntax
+      # Validate Terraform configuration
       - name: Terraform Validate
         run: terraform validate
+
+      # Run Terraform linting
+      - name: Run TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: TFLint Init
+        run: tflint --init
+
+      - name: TFLint Run
+        run: tflint -f compact
+
+      # Run Terraform security scan
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3

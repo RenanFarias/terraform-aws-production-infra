@@ -1,0 +1,11 @@
+# TFLint configuration for Terraform project
+
+config {
+  module = true
+}
+
+plugin "aws" {
+  enabled = true
+  version = "0.29.0"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+}
